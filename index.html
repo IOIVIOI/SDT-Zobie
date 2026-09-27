@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>安全区入口检查站 · 信号检测论模拟器</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- 全局扫描线氛围层 -->
+<div class="fx-scanlines" aria-hidden="true"></div>
+
+<!-- ===================== 顶栏 ===================== -->
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">☣</span>
+    <div class="brand-text">
+      <h1>安全区入口检查站</h1>
+      <p>SIGNAL DETECTION THEORY · 感染筛查模拟</p>
+    </div>
+  </div>
+  <nav class="topnav">
+    <button class="navbtn" data-screen="brief">任务简报</button>
+    <button class="navbtn" data-screen="lab">理论实验室</button>
+    <button class="navbtn" data-screen="result">执勤报告</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ===================== 屏幕 1：任务简报 ===================== -->
+<section class="screen is-active" id="screen-brief">
+  <div class="brief-grid">
+
+    <div class="stack">
+      <div class="panel">
+        <h2>任务简报</h2>
+        <p class="lead">
+          末日第 <b>1,284</b> 天。你是 <b>7 号安全区</b> 入口的检查员。
+          三天前，一支外出搜集物资的队伍在旧城区遭遇尸群，激战中被打散、失去联络。
+          从昨夜起，幸存者陆续摸回安全区——<strong>每一个人身上都带着伤</strong>。
+        </p>
+        <p>
+          混战里没人分得清伤口是怎么来的：丧尸咬的、碎玻璃划的、队友武器擦的、从二楼摔下来磕的。
+          丧尸造成的伤口带有特征性的坏死表现；而野狗撕咬、铁丝网剐蹭、跌落擦伤造成的普通外伤，
+          在昏暗的探照灯下看起来<strong>极其相似</strong>。
+          你必须根据伤口的"感染特征强度"，判断归队的这个人该<strong>放行</strong>还是<strong>隔离观察</strong>。
+        </p>
+        <p class="warn-note">
+          ⚠ 放走一个被咬的人，小队要出动镇压，代价高昂；冤枉一个健康的队友，你损失一个人手，还寒了所有人的心。
+          两种错误都要付账，只是价钱不一样——这正是信号检测论要研究的问题。
+        </p>
+      </div>
+
+      <div class="panel">
+        <h2>信号与噪音</h2>
+        <div class="def-cards">
+          <div class="def def-signal">
+            <div class="def-head"><span class="dot"></span>信号 S（Signal）</div>
+            <p>归队队员身上的伤口，是<strong>丧尸造成的</strong>咬痕 / 抓痕。</p>
+            <p class="def-sub">
+              尸毒会侵蚀伤口组织，造成<strong>坏死</strong>：组织从暗红、青紫，一路走到灰黑溃烂，
+              齿列印记逐渐清晰。尸毒会沿血管扩散，在伤口周围留下<strong>暗色纹路</strong>。
+              侵蚀越深，这些迹象越明显。
+            </p>
+            <p class="def-sub def-caveat">
+              ⚠ 但<strong>刚被咬不久的伤口，尸毒还没扩散，看上去可能和普通外伤没什么两样</strong>。
+            </p>
+          </div>
+          <div class="def def-noise">
+            <div class="def-head"><span class="dot"></span>噪音 N（Noise）</div>
+            <p>归队队员身上的伤口来自<strong>混战中的其他原因</strong>——野狗咬的、碎玻璃划的、铁丝网剐的、同伴武器误伤的。</p>
+            <p class="def-sub">
+              这些伤口本来是普通外伤。但如果伤得重——组织被压碎、撕开、缺血——
+              <strong>同样会发生组织失活，发暗、发紫、边缘翻卷溃烂。</strong>
+              深层撕裂伤如果伤及血管，皮下也会淤出<strong>沿血管走向的暗色纹路</strong>。
+            </p>
+            <p class="def-sub def-caveat">
+              ⚠ 在昏暗的探照灯下，它和轻度坏死的伤口<strong>很难分辨</strong>。
+            </p>
+          </div>
+        </div>
+        <p class="tip">
+          <b>关键：</b>不要问"鲜红还是青紫"——<strong>两种伤都可能出现任何一种颜色</strong>。
+          你要判断的是<strong>组织坏死到了什么程度</strong>：
+          越接近灰黑溃烂、齿列印记越清晰、黑色血管纹越明显，就越可能是尸毒侵蚀。
+        </p>
+      </div>
+
+      <div class="panel">
+        <h2>四种结果在你的岗位上意味着什么</h2>
+        <table class="outcome-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>实际是信号 S<br /><small>真的有丧尸伤</small></th>
+              <th>实际是噪音 N<br /><small>其实是普通外伤</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>你判定「隔离」<br /><small>报告"有信号"</small></th>
+              <td class="cell-hit">
+                <b>击中 Hit</b>
+                <span>拦下了感染者。没有扩散，但哨所搭进去一份隔离物资和一个人手。</span>
+              </td>
+              <td class="cell-fa">
+                <b>虚报 False Alarm</b>
+                <span>冤枉了一个健康人：安全区少一个劳动力，还白费一份隔离物资。</span>
+              </td>
+            </tr>
+            <tr>
+              <th>你判定「放行」<br /><small>报告"无信号"</small></th>
+              <td class="cell-miss">
+                <b>漏报 Miss</b>
+                <span>感染者混了进去。三天后出现病例，小队必须出动镇压——封锁街区、消耗药品和弹药。
+                安全区不会因此毁灭，但这一次的代价，远高于冤枉一个健康人。</span>
+              </td>
+              <td class="cell-cr">
+                <b>正确拒绝 Correct Rejection</b>
+                <span>确认只是摔伤，正常放行。安全区的劳动力没有增减。</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <aside class="stack">
+      <div class="panel panel-setup">
+        <h2>执勤参数</h2>
+
+        <div class="field">
+          <label for="opt-dprime">辨别难度 <span class="mono">d′</span>
+            <span class="val" id="val-dprime">2.0</span></label>
+          <input type="range" id="opt-dprime" min="0" max="4" step="0.1" value="2" />
+          <p class="hint" id="hint-dprime">特征中等明显：信号与噪音的分布有明显重叠，需要集中注意力。</p>
+        </div>
+
+        <div class="field">
+          <label for="opt-trials">试次数量 <span class="val" id="val-trials">30</span></label>
+          <input type="range" id="opt-trials" min="20" max="80" step="10" value="30" />
+          <p class="hint">至少 20 次。试次越多，d′ 的估计越稳定。</p>
+        </div>
+
+        <div class="field">
+          <label for="opt-priori">遭遇规模 <span class="mono">P(S)</span>
+            <span class="val" id="val-priori">50%</span></label>
+          <input type="range" id="opt-priori" min="10" max="90" step="5" value="50" />
+          <p class="hint" id="hint-priori">正面交火，伤亡惨重——大约一半人可能被咬。这是最"中立"的设定。</p>
+        </div>
+
+        <div class="field">
+          <label for="opt-timelimit">单次判断限时 <span class="val" id="val-timelimit">5.0 s</span></label>
+          <input type="range" id="opt-timelimit" min="2" max="12" step="0.5" value="5" />
+          <p class="hint">超时未决 = 默认放行（尸群可能还在附近，闸门不能一直开着）。</p>
+        </div>
+
+        <div class="field">
+          <label>安全区政策 <span class="hint-inline">决定两种错误的代价比</span></label>
+          <div class="policy-group">
+            <label class="policy-opt">
+              <input type="radio" name="policy" value="humane" />
+              <span><b>人道优先</b><small>1 : 1</small></span>
+            </label>
+            <label class="policy-opt">
+              <input type="radio" name="policy" value="balanced" checked />
+              <span><b>均衡</b><small>2 : 1</small></span>
+            </label>
+            <label class="policy-opt">
+              <input type="radio" name="policy" value="hardline" />
+              <span><b>铁腕</b><small>6 : 1</small></span>
+            </label>
+          </div>
+          <p class="hint">比例为 <b>漏报代价 : 虚报代价</b>。比值越大，越应该倾向于隔离。</p>
+        </div>
+
+        <div class="field field-row">
+          <label class="switch">
+            <input type="checkbox" id="opt-feedback" checked />
+            <span class="switch-ui"></span>
+            <span>即时反馈<small>结算时告诉你判断对错（训练模式）</small></span>
+          </label>
+        </div>
+
+        <div class="field field-row">
+          <label class="switch">
+            <input type="checkbox" id="opt-sound" checked />
+            <span class="switch-ui"></span>
+            <span>音效<small>心跳、警报、扫描声</small></span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary btn-lg" id="btn-start">开始执勤</button>
+        <button class="btn btn-ghost" id="btn-to-lab">先去看看理论实验室</button>
+      </div>
+
+      <div class="panel panel-mini">
+        <h3>上一局成绩</h3>
+        <div id="last-run" class="last-run">还没有执勤记录。</div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- ===================== 屏幕 2：游戏 ===================== -->
+<section class="screen" id="screen-game">
+  <div class="game-grid">
+
+    <div class="panel stage-panel">
+      <div class="stage-head">
+        <span class="tag" id="trial-counter">已归队 1 / 30</span>
+        <span class="tag tag-subject" id="subject-tag">队员 #0000</span>
+        <span class="tag tag-warn" id="priori-tag">P(S) = 50%</span>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="stage" width="640" height="660"></canvas>
+        <div class="stage-veil" id="stage-veil"></div>
+        <div class="stage-msg" id="stage-msg"></div>
+      </div>
+
+      <div class="timer-bar" id="timer-bar">
+        <div class="timer-fill" id="timer-fill"></div>
+        <span class="timer-text" id="timer-text">5.0s</span>
+      </div>
+
+      <div class="actions">
+        <button class="act act-pass" id="btn-pass">
+          <span class="act-key">A</span>
+          <span class="act-main">
+            <b>放行</b>
+            <small>判定为 · 未感染</small>
+          </span>
+        </button>
+        <button class="act act-quar" id="btn-quar">
+          <span class="act-key">D</span>
+          <span class="act-main">
+            <b>隔离观察</b>
+            <small>判定为 · 已感染</small>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <aside class="stack">
+      <div class="panel">
+        <h3>执勤记录本</h3>
+        <div class="tally">
+          <div class="tally-item t-hit"><span>击中 H</span><b id="t-H">0</b></div>
+          <div class="tally-item t-miss"><span>漏报 M</span><b id="t-M">0</b></div>
+          <div class="tally-item t-fa"><span>虚报 FA</span><b id="t-FA">0</b></div>
+          <div class="tally-item t-cr"><span>正确拒绝 CR</span><b id="t-CR">0</b></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>实时指标</h3>
+        <div class="live" id="live-metrics">
+          <p class="muted">完成第一次判断后开始计算……</p>
+        </div>
+        <p class="hint">指标会随试次波动，这是正常的抽样噪声。局末才是最终成绩。</p>
+      </div>
+
+      <div class="panel">
+        <h3>操作</h3>
+        <p class="hint keys-hint">
+          <kbd>A</kbd> / <kbd>←</kbd> 放行　　<kbd>D</kbd> / <kbd>→</kbd> 隔离<br />
+          <kbd>Esc</kbd> 结束执勤
+        </p>
+        <button class="btn btn-ghost" id="btn-abort">提前结束</button>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<!-- ===================== 屏幕 3：结果 ===================== -->
+<section class="screen" id="screen-result">
+  <div class="result-grid">
+
+    <div class="stack">
+      <div class="panel">
+        <h2>执勤报告</h2>
+        <p class="lead" id="result-headline">——</p>
+
+        <h3>判断结果矩阵</h3>
+        <table class="matrix-table" id="matrix-table">
+          <thead>
+            <tr><th></th><th>实际已感染 S</th><th>实际未感染 N</th><th>合计</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>你判定「隔离观察」</th>
+              <td class="m-hit"><b id="m-H">0</b><small>击中 Hit</small></td>
+              <td class="m-fa"><b id="m-FA">0</b><small>虚报 FA</small></td>
+              <td id="m-report-yes">0</td>
+            </tr>
+            <tr>
+              <th>你判定「放行」</th>
+              <td class="m-miss"><b id="m-M">0</b><small>漏报 Miss</small></td>
+              <td class="m-cr"><b id="m-CR">0</b><small>正确拒绝 CR</small></td>
+              <td id="m-report-no">0</td>
+            </tr>
+            <tr class="matrix-foot">
+              <th>合计</th>
+              <td id="m-ns">0</td>
+              <td id="m-nn">0</td>
+              <td id="m-total">0</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="hint" id="timeout-note"></p>
+      </div>
+
+      <div class="panel">
+        <h3>核心指标</h3>
+        <div class="metric-cards" id="metric-cards"></div>
+        <div class="formula-box">
+          <div><span class="mono">P(Hit) = H / (H + M)</span>　击中率</div>
+          <div><span class="mono">P(FA) = FA / (FA + CR)</span>　虚报率</div>
+          <div><span class="mono">d′ = z(Hit) − z(FA)</span>　辨别力指数</div>
+          <div><span class="mono">c = −½·[ z(Hit) + z(FA) ]</span>　判断标准</div>
+          <div><span class="mono">准确率 = (H + CR) / N</span></div>
+          <div><span class="mono">β_opt = [P(N)/P(S)] · [V(CR)−V(FA)] / [V(H)−V(M)]</span></div>
+          <div><span class="mono">c_opt = ln(β_opt) / d′</span>　最优判断标准</div>
+          <div><span class="mono">稳定度 = 100 + 四格收益累计</span></div>
+        </div>
+        <label class="switch switch-inline">
+          <input type="checkbox" id="opt-correction" checked />
+          <span class="switch-ui"></span>
+          <span>对极端比例使用 <span class="mono">log-linear</span> 校正<small>当 H=0、M=0、FA=0 或 CR=0 时，z 分数会变成 ±∞，必须校正</small></span>
+        </label>
+        <p class="hint" id="correction-note"></p>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <h3>证据分布与判断标准</h3>
+        <p class="hint">
+          两条曲线分别是「噪音」与「信号」产生的证据强度分布。
+          琥珀色虚线是你的判断标准 c，绿色虚线是当前政策与先验下的最优标准 c_opt。
+        </p>
+        <canvas class="chart" id="chart-dist" width="560" height="320"></canvas>
+      </div>
+
+      <div class="panel">
+        <h3>ROC 曲线</h3>
+        <p class="hint">
+          曲线上的每一点对应一个可能的判断标准。曲线越靠近左上角，辨别力越强。
+          对角线代表"纯靠猜"（d′ = 0），绿色空心圆标出理论最优工作点。
+        </p>
+        <canvas class="chart" id="chart-roc" width="440" height="400"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="panel">
+    <h2>结果解读</h2>
+    <div class="interpret" id="interpretation"></div>
+  </div>
+
+  <div class="panel">
+    <h2>历史战绩 <span class="h2-sub">保存在本机浏览器（localStorage）</span></h2>
+    <div class="leaderboard" id="leaderboard"></div>
+    <div class="row-btns">
+      <button class="btn btn-primary" id="btn-again">再来一局</button>
+      <button class="btn btn-ghost" id="btn-clear-history">清空历史记录</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 屏幕 4：理论实验室 ===================== -->
+<section class="screen" id="screen-lab">
+  <div class="lab-grid">
+
+    <div class="panel lab-controls">
+      <h2>理论实验室</h2>
+      <p class="lead">
+        这里没有归队的队员，只有公式。亲手拖动参数，看看 d′ 和 c 到底在做什么。
+      </p>
+
+      <div class="field">
+        <label for="lab-dprime">辨别力 <span class="mono">d′</span>
+          <span class="val" id="lab-val-dprime">2.0</span></label>
+        <input type="range" id="lab-dprime" min="0" max="5" step="0.05" value="2" />
+        <p class="hint">两条分布中心之间的距离（以标准差为单位）。d′ 越大，重叠越少，越好分辨。</p>
+      </div>
+
+      <div class="field">
+        <label for="lab-c">判断标准 <span class="mono">c</span>
+          <span class="val" id="lab-val-c">0.00</span></label>
+        <input type="range" id="lab-c" min="-2.5" max="2.5" step="0.05" value="0" />
+        <p class="hint">
+          c &gt; 0 表示<strong>保守</strong>（倾向放行，少隔离）；c &lt; 0 表示<strong>激进</strong>（倾向隔离）。
+        </p>
+      </div>
+
+      <div class="field">
+        <label for="lab-priori">信号先验 <span class="mono">P(S)</span>
+          <span class="val" id="lab-val-priori">50%</span></label>
+        <input type="range" id="lab-priori" min="5" max="95" step="5" value="50" />
+        <p class="hint" id="lab-hint-priori"></p>
+      </div>
+
+      <div class="readout" id="lab-readout"></div>
+
+      <button class="btn btn-primary" id="btn-lab-back">返回任务简报</button>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <h3>分布与判断标准</h3>
+        <canvas class="chart" id="lab-dist" width="560" height="320"></canvas>
+        <p class="hint">
+          <span class="lg lg-hit"></span>击中 H
+          <span class="lg lg-fa"></span>虚报 FA
+          <span class="lg lg-miss"></span>漏报 M
+          <span class="lg lg-cr"></span>正确拒绝 CR
+        </p>
+      </div>
+
+      <div class="panel">
+        <h3>ROC 曲线</h3>
+        <canvas class="chart" id="lab-roc" width="440" height="400"></canvas>
+        <p class="hint">
+          拖动 d′ 看曲线如何被"顶"向左上角；拖动 c 看点沿曲线滑动。
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <span>安全区入口检查站 · 信号检测论（SDT）交互模拟器</span>
+  <span class="muted">纯前端实现 · 双击 index.html 即可运行</span>
+</footer>
+
+<!-- 顺序加载：file:// 下不可使用 ES Module -->
+<script src="js/stats.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/render.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/game.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
