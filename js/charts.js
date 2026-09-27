@@ -55,8 +55,8 @@
     var canvas = global.document.getElementById(canvasId);
     if (!canvas) return;
     var context = setup(canvas);
-    var width = Number(canvas.getAttribute('width')) || 560;
-    var height = Number(canvas.getAttribute('height')) || 320;
+    var width = Number(canvas.dataset.logicalW) || Number(canvas.getAttribute('width')) || canvas.width;
+    var height = Number(canvas.dataset.logicalH) || Number(canvas.getAttribute('height')) || canvas.height;
     var dPrime = Math.max(0, finite(options.dPrime, 0));
     var criterion = finite(options.c, 0);
     var criterionOpt = Number.isFinite(options.cOpt) ? options.cOpt : null;
@@ -187,8 +187,8 @@
     var canvas = global.document.getElementById(canvasId);
     if (!canvas) return;
     var context = setup(canvas);
-    var width = Number(canvas.getAttribute('width')) || 440;
-    var height = Number(canvas.getAttribute('height')) || 400;
+    var width = Number(canvas.dataset.logicalW) || Number(canvas.getAttribute('width')) || canvas.width;
+    var height = Number(canvas.dataset.logicalH) || Number(canvas.getAttribute('height')) || canvas.height;
     var dPrime = Math.max(0, finite(options.dPrime, 0));
     var margin = 52;
     var plot = {
