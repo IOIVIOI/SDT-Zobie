@@ -8,23 +8,46 @@
   var SDT = global.SDT = global.SDT || {};
   var C = SDT.CONST || {};
 
-  // 逻辑尺寸 = canvas 标签上写的 width/height（单位是 CSS 像素），必须在
-  // setupCanvas 之前读一次：给 canvas.width 赋值会同步改写 width 内容属性，
-  // 之后再读 getAttribute('width') 拿到的就是设备像素尺寸（560×DPR），
-  // 整张图会被放大 DPR 倍、只剩左上角一块可见——在高 DPR 手机上表现为
-  // “图表看不到全貌”。读到的值由 setupCanvas 存进 dataset，后续一律从
-  // dataset 取，不再碰属性。
+  // 画布的逻辑尺寸 = 它在页面上的实际显示宽度。
+  //
+  // 这样 11px 的标注在手机上就是实打实的 11 个 CSS 像素。若沿用固定的
+  // 560×320 绘制空间，一张 320px 宽的卡片会把整张图压到 57%，字号只剩 6px。
+  //
+  // 设计尺寸（HTML 里的 width/height 属性）只决定宽高比，并且只读一次：
+  // 给 canvas.width 赋值会同步改写 width 内容属性，之后再读拿到的就是设备
+  // 像素尺寸——那正是移动端图表被放大 dpr 倍、只剩左上角可见的根因。
+  var MIN_LOGICAL_W = 280;
+  // 上限取两张图里较大的设计宽度：同一条栏里两张图缩放比例一致，
+  // 字号才不会被拉得一大一小。窄于上限时按实际宽度 1:1 绘制。
+  var MAX_LOGICAL_W = 560;
+
+  function designSize(canvas) {
+    if (!canvas.dataset.designW) {
+      canvas.dataset.designW = Number(canvas.getAttribute('width')) || canvas.width;
+      canvas.dataset.designH = Number(canvas.getAttribute('height')) || canvas.height;
+    }
+    return { w: Number(canvas.dataset.designW), h: Number(canvas.dataset.designH) };
+  }
+
+  // 两个图表共用的取尺与建上下文入口
   function prepare(canvas) {
-    var context = SDT.render.setupCanvas(
-      canvas,
-      Number(canvas.getAttribute('width')) || canvas.width,
-      Number(canvas.getAttribute('height')) || canvas.height
-    );
+    var design = designSize(canvas);
+    var shown = canvas.getBoundingClientRect().width;
+    // 量不到宽度（所在屏幕还没显示）就退回设计尺寸；下限 MIN_LOGICAL_W
+    // 保证再窄也不会把图挤成一团。
+    var width = Math.round(SDT.stats.clamp(shown || design.w, MIN_LOGICAL_W, MAX_LOGICAL_W));
+    var height = Math.round(width * design.h / design.w);
     return {
-      context: context,
-      width: Number(canvas.dataset.logicalW),
-      height: Number(canvas.dataset.logicalH)
+      context: SDT.render.setupCanvas(canvas, width, height),
+      width: width,
+      height: height
     };
+  }
+
+  // 窄屏上按比例收窄左边距，免得绘图区被挤扁（设计宽度下与原值一致）
+  function sideMargin(width, designWidth, designMargin, min) {
+    return Math.round(SDT.stats.clamp(
+      width * designMargin / designWidth, min, designMargin));
   }
 
   function finite(value, fallback) {
@@ -76,7 +99,7 @@
     var xMin = -xMax;
     var yMax = Math.max(0.39894228, 0.42) * 1.15;
     var plot = {
-      left: 48,
+      left: sideMargin(width, 560, 48, 30),
       right: width - 18,
       top: 26,
       bottom: height - 42
@@ -203,7 +226,7 @@
     var width = prepared.width;
     var height = prepared.height;
     var dPrime = Math.max(0, finite(options.dPrime, 0));
-    var margin = 52;
+    var margin = sideMargin(width, 440, 52, 34);
     var plot = {
       left: margin,
       top: 28,
@@ -397,6 +420,28 @@
       cOpt: metrics && isFinite(metrics.cOpt) ? metrics.cOpt : null
     });
   }
+
+  // 图表尺寸跟着显示宽度走之后，窗口变化 / 转屏都必须重绘，否则画布还是
+  // 旧宽度下的位图。手机上地址栏收起、横竖屏切换都会触发 resize。
+  var resizeTimer = null;
+
+  function redrawActiveScreen() {
+    var active = global.document.querySelector('.screen.is-active');
+    var id = active ? active.id : '';
+    if (id === 'screen-lab') renderLab();
+    else if (id === 'screen-result') renderAll();
+  }
+
+  function handleViewportChange() {
+    if (resizeTimer !== null) global.clearTimeout(resizeTimer);
+    resizeTimer = global.setTimeout(function () {
+      resizeTimer = null;
+      redrawActiveScreen();
+    }, 150);
+  }
+
+  global.addEventListener('resize', handleViewportChange);
+  global.addEventListener('orientationchange', handleViewportChange);
 
   SDT.charts = {
     renderDist: drawDistribution,

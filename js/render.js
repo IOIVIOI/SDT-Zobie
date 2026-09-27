@@ -15,14 +15,15 @@
   var lastTime = 0;
 
   function setupCanvas(canvas, logicalW, logicalH) {
-    // 逻辑尺寸只在第一次调用时记录，之后一律从 dataset 读。
-    // 这样无论调用多少次、无论 DPR 是多少，都不会重复放大。
-    if (!canvas.dataset.logicalW) {
-      canvas.dataset.logicalW = logicalW;
-      canvas.dataset.logicalH = logicalH;
-    }
-    var w = Number(canvas.dataset.logicalW);
-    var h = Number(canvas.dataset.logicalH);
+    // 逻辑尺寸由调用方给出：图表给的是「实际显示宽度」，让字号在手机上保持
+    // 真实大小；舞台给的是固定的设计尺寸。每次按参数更新，尺寸没变就不动
+    // 后备缓冲区。
+    // 注意：给 canvas.width 赋值会同步改写 width 内容属性，所以逻辑尺寸只能
+    // 来自参数，绝不能再回头去读 canvas 的 width/height 属性。
+    canvas.dataset.logicalW = logicalW;
+    canvas.dataset.logicalH = logicalH;
+    var w = logicalW;
+    var h = logicalH;
 
     var dpr = Math.max(1, global.devicePixelRatio || 1);
     var nextW = Math.round(w * dpr);
