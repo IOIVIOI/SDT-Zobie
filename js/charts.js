@@ -8,12 +8,23 @@
   var SDT = global.SDT = global.SDT || {};
   var C = SDT.CONST || {};
 
-  function setup(canvas) {
-    return SDT.render.setupCanvas(
+  // 逻辑尺寸 = canvas 标签上写的 width/height（单位是 CSS 像素），必须在
+  // setupCanvas 之前读一次：给 canvas.width 赋值会同步改写 width 内容属性，
+  // 之后再读 getAttribute('width') 拿到的就是设备像素尺寸（560×DPR），
+  // 整张图会被放大 DPR 倍、只剩左上角一块可见——在高 DPR 手机上表现为
+  // “图表看不到全貌”。读到的值由 setupCanvas 存进 dataset，后续一律从
+  // dataset 取，不再碰属性。
+  function prepare(canvas) {
+    var context = SDT.render.setupCanvas(
       canvas,
       Number(canvas.getAttribute('width')) || canvas.width,
       Number(canvas.getAttribute('height')) || canvas.height
     );
+    return {
+      context: context,
+      width: Number(canvas.dataset.logicalW),
+      height: Number(canvas.dataset.logicalH)
+    };
   }
 
   function finite(value, fallback) {
@@ -54,9 +65,10 @@
   function drawDistribution(canvasId, options) {
     var canvas = global.document.getElementById(canvasId);
     if (!canvas) return;
-    var context = setup(canvas);
-    var width = Number(canvas.dataset.logicalW) || Number(canvas.getAttribute('width')) || canvas.width;
-    var height = Number(canvas.dataset.logicalH) || Number(canvas.getAttribute('height')) || canvas.height;
+    var prepared = prepare(canvas);
+    var context = prepared.context;
+    var width = prepared.width;
+    var height = prepared.height;
     var dPrime = Math.max(0, finite(options.dPrime, 0));
     var criterion = finite(options.c, 0);
     var criterionOpt = Number.isFinite(options.cOpt) ? options.cOpt : null;
@@ -186,9 +198,10 @@
   function drawRoc(canvasId, options) {
     var canvas = global.document.getElementById(canvasId);
     if (!canvas) return;
-    var context = setup(canvas);
-    var width = Number(canvas.dataset.logicalW) || Number(canvas.getAttribute('width')) || canvas.width;
-    var height = Number(canvas.dataset.logicalH) || Number(canvas.getAttribute('height')) || canvas.height;
+    var prepared = prepare(canvas);
+    var context = prepared.context;
+    var width = prepared.width;
+    var height = prepared.height;
     var dPrime = Math.max(0, finite(options.dPrime, 0));
     var margin = 52;
     var plot = {
